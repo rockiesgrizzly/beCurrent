@@ -1,0 +1,76 @@
+@startuml BeReal Clone - Feed View (Walking Skeleton v1)
+
+!define RECTANGLE class
+
+package "App Layer" {
+  RECTANGLE App_Structure {
+    + BeRealCloneApp (@main)
+    + ContentView
+    + DependencyContainer
+  }
+}
+
+package "Presentation Layer" {
+  RECTANGLE SwiftUI_Views {
+    + FeedView
+    + PostCardView
+  }
+  
+  RECTANGLE ViewModels {
+    + FeedViewModel
+  }
+}
+
+package "Domain Layer" {
+  RECTANGLE Entities {
+    + BeRealPost
+    + User
+  }
+  
+  RECTANGLE UseCases {
+    + GetFeedUseCase
+  }
+  
+  RECTANGLE Repository_Protocols {
+    + PostRepository
+  }
+}
+
+package "Data Layer" {
+  RECTANGLE Repositories {
+    + MockPostRepository
+  }
+  
+  RECTANGLE DataSources {
+    + LocalDataSource
+  }
+}
+
+' Dependencies
+App_Structure --> SwiftUI_Views
+App_Structure --> ViewModels
+SwiftUI_Views --> ViewModels
+ViewModels --> UseCases
+UseCases --> Repository_Protocols
+Repository_Protocols <|.. Repositories
+Repositories --> DataSources
+
+note right of App_Structure
+  v1: Basic feed with mock data
+  TabView with FeedView
+  Simple DI container
+end note
+
+note right of UseCases
+  GetFeedUseCase
+  Returns mock BeReal posts
+  Ready for real data later
+end note
+
+note right of Repositories
+  MockPostRepository
+  Provides sample posts
+  Easy to swap for real impl
+end note
+
+@enduml

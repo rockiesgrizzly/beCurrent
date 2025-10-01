@@ -7,6 +7,9 @@ xcuserdata/
 
 ## Obj-C/Swift specific
 *.hmap
+DEVELOPMENT_PREFERENCES.md
+*/out/*
+
 
 ## App packaging
 *.ipa
