@@ -19,6 +19,8 @@ struct GetFeedUseCaseTests {
         var shouldThrowError = false
         var mockPosts: [Post] = []
         var feedCallCount = 0
+        var refreshedFeedCallCount = 0
+        var createPostCallCount = 0
         
         var feed: [Post] {
             get async throws {
@@ -30,6 +32,28 @@ struct GetFeedUseCaseTests {
                 
                 return mockPosts
             }
+        }
+        
+        var refreshedFeed: [Post] {
+            get async throws {
+                refreshedFeedCallCount += 1
+                
+                if shouldThrowError {
+                    throw TestError.networkError
+                }
+                
+                return mockPosts
+            }
+        }
+        
+        func createPost(post: Post) async throws -> Post {
+            createPostCallCount += 1
+            
+            if shouldThrowError {
+                throw TestError.networkError
+            }
+            
+            return post
         }
     }
     

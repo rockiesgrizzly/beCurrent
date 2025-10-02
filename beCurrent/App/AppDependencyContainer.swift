@@ -10,16 +10,35 @@ import Foundation
 @Observable
 final class DependencyContainer {
     
-    // MARK: - Composition Root
-    private let compositionRoot: CompositionRoot
+    // MARK: - Data Layer Dependencies
+    private let postRepository: PostRepository
+    private let userRepository: UserRepository
     
-    // MARK: - Initializer
-    init(compositionRoot: CompositionRoot = CompositionRoot()) {
-        self.compositionRoot = compositionRoot
+    // MARK: - Domain Layer Dependencies  
+    private let getFeedUseCase: GetFeedUseCaseProtocol
+    private let refreshFeedUseCase: RefreshFeedUseCaseProtocol
+    private let createPostUseCase: CreatePostUseCaseProtocol
+    
+    init() {
+        // Initialize repositories first
+        self.postRepository = MockPostRepository()
+        self.userRepository = MockUserRepository()
+        
+        // Then initialize use cases with repository dependencies
+        self.getFeedUseCase = GetFeedUseCase(postRepository: postRepository)
+        self.refreshFeedUseCase = RefreshFeedUseCase(postRepository: postRepository)
+        self.createPostUseCase = CreatePostUseCase(postRepository: postRepository, userRepository: userRepository)
     }
     
     // MARK: - ViewModels
     func makeFeedViewModel() -> FeedViewModel {
-        compositionRoot.makeFeedViewModel()
+        FeedViewModel(
+            getFeedUseCase: getFeedUseCase,
+            refreshFeedUseCase: refreshFeedUseCase
+        )
+    }
+    
+    func makePostCreationViewModel() -> PostCreationViewModel {
+        PostCreationViewModel(createPostUseCase: createPostUseCase)
     }
 }

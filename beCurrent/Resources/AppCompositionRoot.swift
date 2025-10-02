@@ -15,15 +15,20 @@ final class CompositionRoot {
     
     // MARK: - Domain Layer
     private let getFeedUseCase: GetFeedUseCaseProtocol
+    private let refreshFeedUseCase: RefreshFeedUseCaseProtocol
     
     init() {
         // Wire up dependencies from outer to inner layers
         self.postRepository = MockPostRepository()
         self.getFeedUseCase = GetFeedUseCase(postRepository: postRepository)
+        self.refreshFeedUseCase = RefreshFeedUseCase(postRepository: postRepository)
     }
     
     // MARK: - Factory Methods
     func makeFeedViewModel() -> FeedViewModel {
-        return FeedViewModel(getFeedUseCase: getFeedUseCase)
+        return FeedViewModel(
+            getFeedUseCase: getFeedUseCase,
+            refreshFeedUseCase: refreshFeedUseCase
+        )
     }
 }

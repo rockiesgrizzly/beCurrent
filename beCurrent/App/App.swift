@@ -13,8 +13,14 @@ struct beCurrentApp: App {
     
     var body: some Scene {
         WindowGroup {
-            ContentView()
-                .environment(dependencyContainer)
+            TabView {
+                FeedView(viewModel: dependencyContainer.makeFeedViewModel())
+                    .tabItem {
+                        Image(systemName: "house.fill")
+                        Text("Feed")
+                    }
+            }
+            .environment(dependencyContainer)
         }
     }
 }

@@ -10,7 +10,7 @@ import Foundation
 @MainActor
 @Observable
 final class FeedViewModel {
-    var posts: [PostPresentationModel] = []
+    var posts: [PostViewModel] = []
     var isLoading = false
     var errorMessage: String?
     
@@ -31,7 +31,7 @@ final class FeedViewModel {
         
         do {
             let domainPosts = try await getFeedUseCase.feedPosts
-            posts = domainPosts.map(PostPresentationModel.init)
+            posts = domainPosts.map(PostViewModel.init)
         } catch {
             errorMessage = "Failed to load feed: \(error.localizedDescription)"
         }
@@ -45,7 +45,7 @@ final class FeedViewModel {
         
         do {
             let domainPosts = try await refreshFeedUseCase.feedPosts
-            posts = domainPosts.map(PostPresentationModel.init)
+            posts = domainPosts.map(PostViewModel.init)
         } catch {
             errorMessage = "Failed to refresh feed: \(error.localizedDescription)"
         }

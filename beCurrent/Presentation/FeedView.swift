@@ -48,7 +48,7 @@ struct FeedView: View {
                     }
                 }
             }
-            .navigationTitle("BeReal")
+            .navigationTitle("BeCurrent")
             .task {
                 await viewModel.loadFeed()
             }

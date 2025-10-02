@@ -9,31 +9,26 @@ import SwiftUI
 import CoreLocation
 
 struct PostCardView: View {
-    let post: Post
+    let post: PostViewModel
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             // Header with user info and timestamp
             HStack {
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(post.user.displayName)
+                    Text(post.username)
                         .font(.headline)
                         .fontWeight(.semibold)
                     
                     HStack(spacing: 4) {
-                        Text(formatTimeAgo(post.timestamp))
+                        Text(post.timeAgo)
                             .font(.caption)
                             .foregroundColor(.secondary)
                         
-                        if post.isLate, let minutes = post.lateByMinutes {
-                            Text("• \(minutes)min late")
+                        if post.isLate, let lateIndicator = post.lateIndicator {
+                            Text("• \(lateIndicator)")
                                 .font(.caption)
                                 .foregroundColor(.orange)
-                        }
-                        
-                        if post.location != nil {
-                            Text("• 📍")
-                                .font(.caption)
                         }
                     }
                 }
@@ -41,7 +36,7 @@ struct PostCardView: View {
                 Spacer()
             }
             
-            // Dual image layout (BeReal style)
+            // Dual image layout (BeCurrent style)
             ZStack(alignment: .topLeading) {
                 // Back camera (main image)
                 AsyncImage(url: post.backImageURL) { image in
@@ -97,34 +92,27 @@ struct PostCardView: View {
         .cornerRadius(16)
         .shadow(color: .black.opacity(0.1), radius: 8, x: 0, y: 4)
     }
-    
-    private func formatTimeAgo(_ date: Date) -> String {
-        let interval = Date().timeIntervalSince(date)
-        let minutes = Int(interval / 60)
-        let hours = Int(interval / 3600)
-        
-        if hours > 0 {
-            return "\(hours)h ago"
-        } else if minutes > 0 {
-            return "\(minutes)m ago"
-        } else {
-            return "Just now"
-        }
-    }
 }
 
 #Preview {
-    let mockUser = User(username: "preview_user", displayName: "Preview User")
+    let mockUser = User(
+        username: "preview_user",
+        displayName: "Preview User"
+    )
+    
     let mockPost = Post(
         user: mockUser,
         frontImageURL: URL(string: "https://picsum.photos/400/600")!,
         backImageURL: URL(string: "https://picsum.photos/600/400")!,
         caption: "This is a preview post!",
-        timestamp: Date().addingTimeInterval(-3600),
+        timestamp: Date().addingTimeInterval(-3600), // 1 hour ago
         isLate: true,
         lateByMinutes: 15
     )
     
-    return PostCardView(post: mockPost)
+    let postViewModel = PostViewModel(from: mockPost)
+    
+    PostCardView(post: postViewModel)
         .padding()
 }
+
