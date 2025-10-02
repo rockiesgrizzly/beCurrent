@@ -33,7 +33,11 @@
 		4378643D2E8DC0F500FA48AE /* Exceptions for "beCurrent" folder in "beCurrent" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Info.plist,
+				App/Info.plist,
+				Resources/architecture.UML,
+				"zDev/architecture/BeReal Clone - CLEAN Architecture.png",
+				"zDev/architecture/BeReal Clone - Feed View (Walking Skeleton v1).png",
+				zDev/DEVELOPMENT_PREFERENCES.md,
 			);
 			target = 437864192E8DC0F400FA48AE /* beCurrent */;
 		};
@@ -295,7 +299,7 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = beCurrent/Info.plist;
+				INFOPLIST_FILE = beCurrent/App/Info.plist;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -340,7 +344,7 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = beCurrent/Info.plist;
+				INFOPLIST_FILE = beCurrent/App/Info.plist;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
