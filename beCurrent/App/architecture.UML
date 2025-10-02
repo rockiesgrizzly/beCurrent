@@ -1,0 +1,157 @@
+@startuml beCurrent - Clean Architecture (Walking Skeleton v1)
+
+package "UI LAYER" #lightgreen {
+  class FeedView {
+    + body: some View
+  }
+  
+  class PostCardView {
+    + body: some View
+  }
+  
+  class PostCreationView {
+    + body: some View
+  }
+}
+
+package "PRESENTER LAYER" #lightcyan {
+  class FeedViewModel { 
+    + posts: [PostPresentationModel]
+    + isLoading: Bool
+    + errorMessage: String?
+    + loadFeed() async
+    + refreshFeed() async
+  }
+  
+  class PostPresentationModel {
+    + id: String
+    + username: String
+    + frontImageURL: URL
+    + backImageURL: URL
+    + caption: String?
+    + timeAgo: String
+    + isLate: Bool
+    + lateIndicator: String?
+  }
+  
+  class PostCreationPresenter {
+    + createPost(front: UIImage, back: UIImage) async
+  }
+}
+
+package "DOMAIN" #lightyellow {
+  class Post {
+    + id: UUID
+    + user: User
+    + frontImageURL: URL
+    + backImageURL: URL
+    + caption: String?
+    + location: CLLocation?
+    + timestamp: Date
+    + isLate: Bool
+    + lateByMinutes: Int?
+  }
+  
+  class User {
+    + id: UUID
+    + username: String
+    + displayName: String
+    + profileImageURL: URL?
+  }
+  
+  class GetFeedUseCase {
+    + feedPosts: [Post] { get async throws }
+  }
+  
+  class CreatePostUseCase {
+    + createPost(frontImage: Data, backImage: Data, caption: String?) async throws -> Post
+  }
+  
+  class RefreshFeedUseCase {
+    + feedPosts: [Post] { get async throws }
+  }
+  
+  interface PostRepository {
+    + feed: [Post] { get async throws }
+    + createPost(post: Post) async throws -> Post
+    + refreshedFeed: [Post] { get async throws }
+  }
+  
+  interface UserRepository {
+    + currentUser: User { get async throws }
+  }
+}
+
+package "DATA" #lightcoral {
+  class MockPostRepository {
+    - mockPosts: [Post]
+    - mockUsers: [User]
+    + feed: [Post] { get async throws }
+    + createPost(post: Post) async throws -> Post
+    + refreshedFeed: [Post] { get async throws }
+  }
+  
+  class MockUserRepository {
+    - _currentUser: User
+    + currentUser: User { get async throws }
+  }
+  
+  class APIService <<Future>> {
+    + fetchFeed() async throws -> [PostDTO]
+    + uploadPost() async throws -> PostDTO
+  }
+  
+  class CoreDataService <<Future>> {
+    + savePosts([Post])
+    + loadCachedPosts() -> [Post]
+  }
+}
+
+package "APP LAYER" #lightblue {
+  class beCurrentApp {
+    + main()
+  }
+  
+  class ContentView {
+    + body: some View
+  }
+  
+  class DependencyContainer {
+    + postRepository: PostRepository
+    + userRepository: UserRepository
+    + getFeedUseCase: GetFeedUseCase
+    + refreshFeedUseCase: RefreshFeedUseCase
+    + createPostUseCase: CreatePostUseCase
+  }
+}
+
+FeedView -[#red]-> FeedViewModel
+PostCreationView -[#red]-> PostCreationPresenter
+
+FeedViewModel -[#red]-> GetFeedUseCase
+FeedViewModel -[#red]-> RefreshFeedUseCase
+PostCreationPresenter -[#red]-> CreatePostUseCase
+
+GetFeedUseCase -[#red]-> PostRepository
+CreatePostUseCase -[#red]-> PostRepository
+CreatePostUseCase -[#red]-> UserRepository
+RefreshFeedUseCase -[#red]-> PostRepository
+
+FeedViewModel <-[#orange]- GetFeedUseCase : [Post]
+PostCreationPresenter <-[#orange]- CreatePostUseCase : Post
+
+PostRepository <|.. MockPostRepository
+UserRepository <|.. MockUserRepository
+
+MockPostRepository -[#red]-> APIService : Future
+MockPostRepository -[#red]-> CoreDataService : Future
+
+GetFeedUseCase -[#red]-> Post : uses
+CreatePostUseCase -[#red]-> Post : creates
+CreatePostUseCase -[#red]-> User : uses
+
+beCurrentApp --> ContentView
+beCurrentApp --> DependencyContainer
+ContentView --> FeedView
+
+@enduml

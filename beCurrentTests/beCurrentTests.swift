@@ -42,8 +42,8 @@ struct GetFeedUseCaseTests {
     private func makeMockPost(username: String = "testuser") -> Post {
         Post(
             user: User(username: username, displayName: "Test User"),
-            frontImageURL: URL(string: "https://example.com/front.jpg")!,
-            backImageURL: URL(string: "https://example.com/back.jpg")!,
+            frontImageURL: URL(string: "https://sleeptoken.com/front.jpg")!,
+            backImageURL: URL(string: "https://sleeptoken.com/back.jpg")!,
             caption: "Test caption"
         )
     }

@@ -10,19 +10,16 @@ import Foundation
 @Observable
 final class DependencyContainer {
     
-    // MARK: - Repositories
-    private static var postRepository: PostRepository = MockPostRepository()
-    
-    // MARK: - Use Cases
-    private var getFeedUseCase: GetFeedUseCaseProtocol
+    // MARK: - Composition Root
+    private let compositionRoot: CompositionRoot
     
     // MARK: - Initializer
-    init() {
-        self.getFeedUseCase = GetFeedUseCase(postRepository: Self.postRepository)
+    init(compositionRoot: CompositionRoot = CompositionRoot()) {
+        self.compositionRoot = compositionRoot
     }
     
     // MARK: - ViewModels
     func makeFeedViewModel() -> FeedViewModel {
-        FeedViewModel(getFeedUseCase: getFeedUseCase)
+        compositionRoot.makeFeedViewModel()
     }
 }

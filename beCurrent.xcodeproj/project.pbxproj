@@ -34,7 +34,6 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				App/Info.plist,
-				Resources/architecture.UML,
 				"zDev/architecture/BeReal Clone - CLEAN Architecture.png",
 				"zDev/architecture/BeReal Clone - Feed View (Walking Skeleton v1).png",
 				zDev/DEVELOPMENT_PREFERENCES.md,
