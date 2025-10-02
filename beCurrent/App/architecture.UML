@@ -1,29 +1,42 @@
 @startuml beCurrent - Clean Architecture (Walking Skeleton v1)
 
-package "UI LAYER" #lightgreen {
+package "UI" #lightgreen {
   class FeedView {
+    + viewModel: FeedViewModel
+    --
     + body: some View
   }
   
   class PostCardView {
+    + post: PostViewModel
+    --
     + body: some View
   }
   
   class PostCreationView {
+    + viewModel: PostCreationViewModel
+    --
+    - isShowingCamera: Bool
+    - isShowingImagePicker: Bool
+    --
     + body: some View
   }
 }
 
-package "PRESENTER LAYER" #lightcyan {
-  class FeedViewModel { 
-    + posts: [PostPresentationModel]
+package "PRESENTATION" #lightcyan {
+  class FeedViewModel {
+    - getFeedUseCase: GetFeedUseCaseProtocol
+    - refreshFeedUseCase: RefreshFeedUseCaseProtocol
+    --
+    + posts: [PostViewModel]
     + isLoading: Bool
     + errorMessage: String?
+    --
     + loadFeed() async
     + refreshFeed() async
   }
   
-  class PostPresentationModel {
+  class PostViewModel <<struct>> {
     + id: String
     + username: String
     + frontImageURL: URL
@@ -34,13 +47,22 @@ package "PRESENTER LAYER" #lightcyan {
     + lateIndicator: String?
   }
   
-  class PostCreationPresenter {
-    + createPost(front: UIImage, back: UIImage) async
+  class PostCreationViewModel {
+    - createPostUseCase: CreatePostUseCaseProtocol
+    --
+    + frontImage: UIImage?
+    + backImage: UIImage?
+    + caption: String
+    + isCreating: Bool
+    + errorMessage: String?
+    + canSubmit: Bool
+    --
+    + createPost() async
   }
 }
 
 package "DOMAIN" #lightyellow {
-  class Post {
+  class Post <<struct>> {
     + id: UUID
     + user: User
     + frontImageURL: URL
@@ -52,23 +74,42 @@ package "DOMAIN" #lightyellow {
     + lateByMinutes: Int?
   }
   
-  class User {
+  class User <<struct>> {
     + id: UUID
     + username: String
     + displayName: String
     + profileImageURL: URL?
   }
   
-  class GetFeedUseCase {
+  interface GetFeedUseCaseProtocol {
     + feedPosts: [Post] { get async throws }
   }
   
-  class CreatePostUseCase {
-    + createPost(frontImage: Data, backImage: Data, caption: String?) async throws -> Post
+  class GetFeedUseCase {
+    - postRepository: PostRepository
+    --
+    + feedPosts: [Post] { get async throws }
+  }
+  
+  interface RefreshFeedUseCaseProtocol {
+    + feedPosts: [Post] { get async throws }
   }
   
   class RefreshFeedUseCase {
+    - postRepository: PostRepository
+    --
     + feedPosts: [Post] { get async throws }
+  }
+  
+  interface CreatePostUseCaseProtocol {
+    + createPost(frontImageData: Data, backImageData: Data, caption: String?) async throws -> Post
+  }
+  
+  class CreatePostUseCase {
+    - postRepository: PostRepository
+    - userRepository: UserRepository
+    --
+    + createPost(frontImageData: Data, backImageData: Data, caption: String?) async throws -> Post
   }
   
   interface PostRepository {
@@ -107,7 +148,7 @@ package "DATA" #lightcoral {
   }
 }
 
-package "APP LAYER" #lightblue {
+package "APP" #lightblue {
   class beCurrentApp {
     + main()
   }
@@ -115,43 +156,43 @@ package "APP LAYER" #lightblue {
   class ContentView {
     + body: some View
   }
-  
-  class DependencyContainer {
-    + postRepository: PostRepository
-    + userRepository: UserRepository
-    + getFeedUseCase: GetFeedUseCase
-    + refreshFeedUseCase: RefreshFeedUseCase
-    + createPostUseCase: CreatePostUseCase
-  }
 }
 
-FeedView -[#red]-> FeedViewModel
-PostCreationView -[#red]-> PostCreationPresenter
+FeedView -- FeedViewModel
+FeedView -[#red]-> PostCardView
+PostCardView -- PostViewModel
+PostCreationView -- PostCreationViewModel
 
-FeedViewModel -[#red]-> GetFeedUseCase
-FeedViewModel -[#red]-> RefreshFeedUseCase
-PostCreationPresenter -[#red]-> CreatePostUseCase
+FeedViewModel -[#red]-> GetFeedUseCaseProtocol
+FeedViewModel -[#red]-> RefreshFeedUseCaseProtocol
+PostCreationViewModel -[#red]-> CreatePostUseCaseProtocol
 
 GetFeedUseCase -[#red]-> PostRepository
 CreatePostUseCase -[#red]-> PostRepository
 CreatePostUseCase -[#red]-> UserRepository
 RefreshFeedUseCase -[#red]-> PostRepository
 
-FeedViewModel <-[#orange]- GetFeedUseCase : [Post]
-PostCreationPresenter <-[#orange]- CreatePostUseCase : Post
+FeedViewModel <-[#orange]- GetFeedUseCaseProtocol : [Post]
+FeedViewModel <-[#orange]- RefreshFeedUseCaseProtocol : [Post]
+PostCreationViewModel <-[#orange]- CreatePostUseCaseProtocol : Post
+
+GetFeedUseCaseProtocol <|.. GetFeedUseCase
+RefreshFeedUseCaseProtocol <|.. RefreshFeedUseCase
+CreatePostUseCaseProtocol <|.. CreatePostUseCase
 
 PostRepository <|.. MockPostRepository
 UserRepository <|.. MockUserRepository
 
 MockPostRepository -[#red]-> APIService : Future
 MockPostRepository -[#red]-> CoreDataService : Future
+MockPostRepository <-[#orange]- APIService : [PostDTO]
+MockPostRepository <-[#orange]- CoreDataService : [Post]
 
 GetFeedUseCase -[#red]-> Post : uses
 CreatePostUseCase -[#red]-> Post : creates
 CreatePostUseCase -[#red]-> User : uses
 
 beCurrentApp --> ContentView
-beCurrentApp --> DependencyContainer
 ContentView --> FeedView
 
 @enduml
