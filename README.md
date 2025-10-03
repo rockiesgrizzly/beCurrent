@@ -4,4 +4,5 @@ an example social app modeled after BeReal
 - Swift, SwiftUI, Swift Concurrency
 - Unit, UI, & Integration Testing
 
-<img width="625" height="825" alt="Screenshot 2025-10-02 at 4 01 33 PM" src="https://github.com/user-attachments/assets/7b1f146a-fadb-4e66-b505-675332515721" />
+# Architectural Diagram in UML
+<img width="500" alt="beCurrentArch" src="https://github.com/user-attachments/assets/3c397799-5745-4af9-9670-5cdf33fb3d56" />
