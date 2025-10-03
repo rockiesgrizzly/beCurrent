@@ -58,5 +58,5 @@ struct FeedView: View {
 
 #Preview {
     let container = DependencyContainer()
-    return FeedView(viewModel: container.makeFeedViewModel())
+    FeedView(viewModel: container.feedViewModel)
 }

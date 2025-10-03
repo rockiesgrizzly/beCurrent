@@ -1,0 +1,71 @@
+---
+config:
+  theme: neo-dark
+---
+flowchart TB
+ subgraph APP["APP LAYER"]
+        DC["DependencyContainer
+        &lt;&gt;
+        ═══════════════════
+        + feedViewModel
+        + postCreationViewModel"]
+        Note1["Dependency Flow:
+        App → Presentation → Domain → Data
+        Each layer only depends on
+        the layer directly below it.
+        Factories enforce proper
+        dependency injection following
+        Clean Architecture principles."]
+  end
+ subgraph PRESENTATION["PRESENTATION LAYER"]
+        PF["PresentationFactory
+        ═══════════════════
+        + feedViewModel
+        + postCreationViewModel"]
+        PFNote["ViewModels:
+        • FeedViewModel
+        • PostCreationViewModel
+        • PostViewModel (struct)"]
+  end
+ subgraph DOMAIN["DOMAIN LAYER"]
+        DF["DomainFactory
+        ═══════════════════
+        + getFeedUseCase
+        + refreshFeedUseCase
+        + createPostUseCase"]
+        DFNote["Use Cases:
+        • GetFeedUseCase
+        • RefreshFeedUseCase
+        • CreatePostUseCase
+        Models:
+        • Post
+        • User
+        • CreatePostInput"]
+  end
+ subgraph DATA["DATA LAYER"]
+        DataF["DataFactory
+        ═══════════════════
+        + postRepository
+        + userRepository"]
+        DataFNote["Repositories:
+        • MockPostRepository
+        • MockUserRepository
+        Future:
+        • APIService
+        • CoreDataService"]
+  end
+    DC -- owns --> PF
+    PF -- depends on --> DF
+    DF -- depends on --> DataF
+    style DC fill:#b3e5fc,color:#000
+    style Note1 fill:#fff,stroke:#999,stroke-dasharray: 5 5,color:#000
+    style PF fill:#b2ebf2,color:#000
+    style PFNote fill:#fff,stroke:#999,stroke-dasharray: 5 5,color:#000
+    style DF fill:#fff59d,color:#000
+    style DFNote fill:#fff,stroke:#999,stroke-dasharray: 5 5,color:#000
+    style DataF fill:#ffab91,color:#000
+    style DataFNote fill:#fff,stroke:#999,stroke-dasharray: 5 5,color:#000
+    style APP fill:#e1f5ff,color:#000
+    style PRESENTATION fill:#e0f7fa,color:#000
+    style DOMAIN fill:#fff9c4,color:#000
+    style DATA fill:#ffccbc,color:#000

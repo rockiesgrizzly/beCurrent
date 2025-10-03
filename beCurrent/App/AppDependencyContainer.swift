@@ -7,38 +7,32 @@
 
 import Foundation
 
+/// App-level dependency container that composes layer-specific factories
+/// following Clean Architecture dependency flow: App -> Presentation -> Domain -> Data
+@MainActor
 @Observable
 final class DependencyContainer {
-    
-    // MARK: - Data Layer Dependencies
-    private let postRepository: PostRepository
-    private let userRepository: UserRepository
-    
-    // MARK: - Domain Layer Dependencies  
-    private let getFeedUseCase: GetFeedUseCaseProtocol
-    private let refreshFeedUseCase: RefreshFeedUseCaseProtocol
-    private let createPostUseCase: CreatePostUseCaseProtocol
-    
+
+    // MARK: - Layer Factories
+
+    private let dataFactory: DataFactory
+    private let domainFactory: DomainFactory
+    private let presentationFactory: PresentationFactory
+
     init() {
-        // Initialize repositories first
-        self.postRepository = MockPostRepository()
-        self.userRepository = MockUserRepository()
-        
-        // Then initialize use cases with repository dependencies
-        self.getFeedUseCase = GetFeedUseCase(postRepository: postRepository)
-        self.refreshFeedUseCase = RefreshFeedUseCase(postRepository: postRepository)
-        self.createPostUseCase = CreatePostUseCase(postRepository: postRepository, userRepository: userRepository)
+        // Initialize factories from outer to inner layers
+        self.dataFactory = DataFactory()
+        self.domainFactory = DomainFactory(dataFactory: dataFactory)
+        self.presentationFactory = PresentationFactory(domainFactory: domainFactory)
     }
-    
+
     // MARK: - ViewModels
-    func makeFeedViewModel() -> FeedViewModel {
-        FeedViewModel(
-            getFeedUseCase: getFeedUseCase,
-            refreshFeedUseCase: refreshFeedUseCase
-        )
+
+    var feedViewModel: FeedViewModel {
+        presentationFactory.feedViewModel
     }
-    
-    func makePostCreationViewModel() -> PostCreationViewModel {
-        PostCreationViewModel(createPostUseCase: createPostUseCase)
+
+    var postCreationViewModel: PostCreationViewModel {
+        presentationFactory.postCreationViewModel
     }
 }

@@ -14,7 +14,7 @@ struct beCurrentApp: App {
     var body: some Scene {
         WindowGroup {
             TabView {
-                FeedView(viewModel: dependencyContainer.makeFeedViewModel())
+                FeedView(viewModel: dependencyContainer.feedViewModel)
                     .tabItem {
                         Image(systemName: "house.fill")
                         Text("Feed")

@@ -12,64 +12,50 @@ import SwiftUI
 final class PostCreationViewModel {
     // Dependencies
     private let createPostUseCase: CreatePostUseCaseProtocol
-    
+
     // Public state properties
-    var frontImage: UIImage?
-    var backImage: UIImage?
+    var frontImageData: Data?
+    var backImageData: Data?
     var caption: String = ""
     var isCreating: Bool = false
     var errorMessage: String?
-    
+
     // Computed properties
     var canSubmit: Bool {
-        frontImage != nil && backImage != nil && !isCreating
+        frontImageData != nil && backImageData != nil && !isCreating
     }
-    
+
     init(createPostUseCase: CreatePostUseCaseProtocol) {
         self.createPostUseCase = createPostUseCase
     }
-    
+
     func createPost() async {
-        guard let frontImage, let backImage else { return }
-        
+        guard let frontImageData, let backImageData else { return }
+
         isCreating = true
         errorMessage = nil
-        
+
         do {
-            guard let frontImageData = frontImage.jpegData(compressionQuality: 0.8),
-                  let backImageData = backImage.jpegData(compressionQuality: 0.8) else {
-                throw PostCreationError.imageProcessingFailed
-            }
-            
-            _ = try await createPostUseCase.createPost(
+            let input = CreatePostInput(
                 frontImageData: frontImageData,
                 backImageData: backImageData,
                 caption: caption.isEmpty ? nil : caption
             )
-            
+
+            _ = try await createPostUseCase.createPost(input: input)
+
             // Reset form after successful creation
             resetForm()
         } catch {
             errorMessage = "Failed to create post: \(error.localizedDescription)"
         }
-        
+
         isCreating = false
     }
-    
-    private func resetForm() {
-        frontImage = nil
-        backImage = nil
-        caption = ""
-    }
-}
 
-enum PostCreationError: LocalizedError {
-    case imageProcessingFailed
-    
-    var errorDescription: String? {
-        switch self {
-        case .imageProcessingFailed:
-            return "Failed to process images"
-        }
+    private func resetForm() {
+        frontImageData = nil
+        backImageData = nil
+        caption = ""
     }
 }

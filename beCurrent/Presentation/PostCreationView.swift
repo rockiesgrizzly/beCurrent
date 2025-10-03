@@ -31,20 +31,22 @@ struct PostCreationView: View {
                     
                     // Image preview section
                     VStack(spacing: 16) {
-                        if let frontImage = viewModel.frontImage,
-                           let backImage = viewModel.backImage {
+                        if let frontImageData = viewModel.frontImageData,
+                           let backImageData = viewModel.backImageData,
+                           let frontUIImage = UIImage(data: frontImageData),
+                           let backUIImage = UIImage(data: backImageData) {
                             // Show both images in BeCurrent style
                             ZStack(alignment: .topLeading) {
                                 // Back camera image
-                                Image(uiImage: backImage)
+                                Image(uiImage: backUIImage)
                                     .resizable()
                                     .aspectRatio(3/4, contentMode: .fill)
                                     .frame(height: 400)
                                     .clipped()
                                     .cornerRadius(12)
-                                
+
                                 // Front camera image (overlay)
-                                Image(uiImage: frontImage)
+                                Image(uiImage: frontUIImage)
                                     .resizable()
                                     .aspectRatio(3/4, contentMode: .fill)
                                     .frame(width: 80, height: 106)
@@ -78,9 +80,9 @@ struct PostCreationView: View {
                                     isShowingCamera = true
                                 }
                         }
-                        
+
                         // Capture button
-                        if viewModel.frontImage == nil || viewModel.backImage == nil {
+                        if viewModel.frontImageData == nil || viewModel.backImageData == nil {
                             Button("📸 Capture BeCurrent") {
                                 isShowingCamera = true
                             }
@@ -154,5 +156,5 @@ struct PostCreationView: View {
 
 #Preview {
     let container = DependencyContainer()
-    return PostCreationView(viewModel: container.makePostCreationViewModel())
+    PostCreationView(viewModel: container.postCreationViewModel)
 }
