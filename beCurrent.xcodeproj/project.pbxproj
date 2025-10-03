@@ -209,6 +209,9 @@
 			);
 			mainGroup = 437864112E8DC0F400FA48AE;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				431715292E90566F00BE5618 /* XCLocalSwiftPackageReference "../Networking" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 4378641B2E8DC0F400FA48AE /* Products */;
 			projectDirPath = "";
@@ -631,6 +634,13 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		431715292E90566F00BE5618 /* XCLocalSwiftPackageReference "../Networking" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../Networking;
+		};
+/* End XCLocalSwiftPackageReference section */
 	};
 	rootObject = 437864122E8DC0F400FA48AE /* Project object */;
 }
