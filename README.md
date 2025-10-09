@@ -1,5 +1,9 @@
 # becurrent
-an example social app modeled after BeReal
+Hello! Thank you for checking out my portfolio.
+
+Here's an example social app modeled after BeReal. My goal was to create a light version of the product to demonstrate how I appreciate architecture and coding in mobile development. 
+
+It utilizes:
 - Clean Swift architecture
 - Swift, SwiftUI, Swift Concurrency
 - Unit, UI, & Integration Testing
